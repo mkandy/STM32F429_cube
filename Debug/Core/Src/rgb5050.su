@@ -1,0 +1,6 @@
+rgb5050.c:14:6:ws2812_set_RGB	24	static
+rgb5050.c:29:6:ws2812_init	24	static
+rgb5050.c:42:6:ws2812_blue	24	static
+rgb5050.c:51:6:ws2812_red	24	static
+rgb5050.c:60:6:ws2812_green	24	static
+rgb5050.c:69:6:ws2812_example	8	static

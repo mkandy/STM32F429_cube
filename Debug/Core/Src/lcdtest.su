@@ -1,0 +1,6 @@
+lcdtest.c:9:6:Load_Drow_Dialog	24	static
+lcdtest.c:22:6:gui_draw_hline	32	static
+lcdtest.c:33:6:gui_fill_circle	40	static
+lcdtest.c:59:5:my_abs	16	static
+lcdtest.c:68:6:lcd_draw_bline	64	static
+lcdtest.c:104:6:lcdtest	24	static

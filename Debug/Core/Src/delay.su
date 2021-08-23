@@ -1,0 +1,4 @@
+delay.c:105:6:delay_init	16	static
+delay.c:169:6:delay_us	24	static
+delay.c:188:6:delay_xms	24	static
+delay.c:203:6:delay_ms	24	static

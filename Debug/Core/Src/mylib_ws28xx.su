@@ -1,0 +1,15 @@
+mylib_ws28xx.c:5:6:__show	8	static
+mylib_ws28xx.c:13:6:__SetPixelColor_RGB	24	static
+mylib_ws28xx.c:29:6:__GetPixelColor_RGB	32	static
+mylib_ws28xx.c:53:6:__SetPixelColor_From_RGB_Buffer	32	static
+mylib_ws28xx.c:66:6:__SetALLColor_RGB	32	static
+mylib_ws28xx.c:75:6:RGB2HSV	40	static
+mylib_ws28xx.c:113:6:HSV2RGB	72	static
+mylib_ws28xx.c:154:6:__SetPixelColor_HSV	40	static
+mylib_ws28xx.c:163:6:__SetPixelColor_HSV_H	48	static
+mylib_ws28xx.c:177:6:__SetPixelColor_HSV_S	48	static
+mylib_ws28xx.c:189:6:__SetPixelColor_HSV_V	48	static
+mylib_ws28xx.c:203:6:__SetALLColor_HSV_H	24	static
+mylib_ws28xx.c:211:6:__SetALLColor_HSV_S	24	static
+mylib_ws28xx.c:219:6:__SetALLColor_HSV_V	24	static
+mylib_ws28xx.c:228:6:WS28xx_TypeStructInit	4	static
