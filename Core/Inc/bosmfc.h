@@ -3,12 +3,7 @@
 #include "type.h"
 #include "stdint.h"
 #include "tim.h"
-#define ONE_PULSE        (154)                           //1 码
-#define ZERO_PULSE       (66)                           //0 码
-#define RESET_PULSE      (280)                           //80 ，复位信号
-#define LED_NUMS         120                            //led 数量
-#define LED_DATA_LEN     (24)                           //led 长度，单个需要24bits
-#define WS2812_DATA_LEN  (LED_NUMS*LED_DATA_LEN)        //ws2812灯条需要的数组长度
+#include "module_select.h"
 
 
 

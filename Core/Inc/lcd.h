@@ -3,7 +3,6 @@
 #include "stdlib.h"
 #include "sys.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32开发板
@@ -49,6 +48,12 @@ extern u32 BACK_COLOR;  	//背景色
 #define BIGWORD_GREENCOLOR 0x07E0   //PASS颜色
 #define BIGWORD_ClEARCOLOR 0xFFFF   //PASS颜色
 //图片
+#ifndef LOGO_W
+#define LOGO_W	480
+#endif
+#ifndef LOGO_H
+#define LOGO_H	799
+#endif
 extern const unsigned short sky_animation_mask[];
 //////////////////////////////////////////////////////////////////////////////////	 
 //-----------------MCU屏 LCD端口定义----------------
@@ -115,7 +120,7 @@ void LCD_DrawPoint(u16 x,u16 y);											//画点
 void LCD_Fast_DrawPoint(u16 x,u16 y,u32 color);								//快速画点
 u32  LCD_ReadPoint(u16 x,u16 y); 											//读点
 void LCD_Draw_Circle(u16 x0,u16 y0,u8 r);						 			//画圆
-void LCD_Draw_CircleColor(u16 x0,u16 y0,u8 r,u8 ex,u8 ey,u16 color);              //圆２
+void LCD_Draw_CircleColor(u16 x0,u16 y0,u8 r,u8 ex,u8 ey,u16 *color);              //圆２
 void LCD_DrawPointcolor(u16 x,u16 y,u16 color);
 
 void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2);							//画线

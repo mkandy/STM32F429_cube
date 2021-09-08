@@ -73,7 +73,8 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/errno.h \
  ../Core/Inc/DS_INA226.h ../Core/Inc/w25qxx.h ../Core/Inc/main.h \
  ../Core/Inc/w25qxxConf.h ../Core/Inc/spi.h \
- ../Core/Inc/stm32f4xx_hal_conf.h ../Core/Inc/at24c16.h ../Core/Inc/lcd.h \
+ ../Core/Inc/stm32f4xx_hal_conf.h ../Core/Inc/module_select.h \
+ ../Core/Inc/at24c16.h ../Core/Inc/lcd.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/sys.h \
  ../Core/Inc/bosmfc.h ../Core/Inc/type.h ../Core/Inc/tim.h
 
@@ -234,6 +235,8 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Core/Inc/spi.h:
 
 ../Core/Inc/stm32f4xx_hal_conf.h:
+
+../Core/Inc/module_select.h:
 
 ../Core/Inc/at24c16.h:
 

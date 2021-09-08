@@ -38,6 +38,7 @@
 #include "at24c16.h"
 #include "lcd.h"
 #include "bosmfc.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,14 +62,6 @@
 #define LOGO_H	799
 #endif
 
-#define VALTAGE_MIN 3.000
-#define VALTAGE_MAX 6.000
-
-
-#define CURRENT_MIN 170.000
-#define CURRENT_MAX 190.000
-
-#define PULSE_DOUT 3
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -114,6 +107,8 @@ const osThreadAttr_t AT24C16Start_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 void client(void);
+
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -130,11 +125,51 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   * @param  None
   * @retval None
   */
+
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	LCD_Init();					//初始化LCD
-	LCD_Display_Dir(0);//竖屏显示刷背�????
-#if (_W25QXX_DEBUG==0)
+	LCD_Display_Dir(0);//竖屏显示刷背�?????
+	W25qxx_Init();
+#if (_W25QXX_DEBUG_Read==1)
+	  uint16_t i,j;
+	  uint8_t rBuff[2]="";
+	  uint32_t rnumber=0;
+	  for(i=0;i<LOGO_H;i++)
+		  {
+			LCD_SetCursor(0,i);   	//设置光标位置
+			LCD_WriteRAM_Prepare();     //�???????????????????????????????始写入GRAM
+				for(j=0;j<LOGO_W;j++)
+				{
+
+					//LCD->LCD_RAM=sky_animation_mask[i*799+j];
+			/*		image=i*799+j;
+				// printf("\r\n>>>>>>sky_animation_mask= 0x%hx\r\n",sky_animation_mask[image]);
+				 printf("\r\n\r\n\r\nimage %d\r\n",(int)image);
+
+				 wBuff[0] = sky_animation_mask[image];
+				 wBuff[1] = (sky_animation_mask[image]>>8);
+		 // printf("\r\n wBuffL= 0x%x  wBuffH= 0x%x\r\n",wBuff[0],wBuff[1]);
+
+		  W25qxx_WriteByte(wBuff[0],rnumber);
+		  W25qxx_WriteByte(wBuff[1],rnumber+1);
+		  */
+		  W25qxx_ReadByte(&rBuff[0],rnumber);
+		  W25qxx_ReadByte(&rBuff[1],rnumber+1);
+			// printf(" rBuffL=%x rBuffH= 0x%x \r\n",rBuff[0],rBuff[1]);
+		  uint16_t readflash16hex;
+		  readflash16hex=rBuff[1];
+		  readflash16hex=((readflash16hex<<8)+rBuff[0]);
+		  LCD->LCD_RAM=readflash16hex;
+		//	 printf("\r\nrnumber %d\r\n",rnumber);
+		//	 printf("\r\n>>>>>>readflash16hex= 0x%hx\r\n",readflash16hex);
+
+			 rnumber=rnumber+2;
+
+				}
+		  }
+
+#elif(_W25QXX_DEBUG_Write==0)
   LCD_Color_Fill(1,1,LOGO_W,LOGO_H,(uint16_t*)sky_animation_mask); //指定区域填充色块（color为色块数组）
 //  LCD_ShowString(250,240,200,32,32,"DS STM32F4/F7",1);
 #endif
@@ -154,6 +189,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -173,6 +209,7 @@ void MX_FREERTOS_Init(void) {
   AT24C16StartHandle = osThreadNew(StartAT24C16Start, NULL, &AT24C16Start_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
+
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -233,10 +270,10 @@ void StartDefaultTask(void *argument)
   		sin_size = sizeof(struct sockaddr_in);
   		connected = accept(sock, (struct sockaddr *)&client_addr, &sin_size);
   		printf("new client connected from %s, %d\r\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-  		{
+
   			int flag = 1;
   			setsockopt(connected, IPPROTO_TCP, TCP_NODELAY, (void *)&flag, sizeof(int));
-  		}
+
   		while(1)
   		{
   			recv_data_len = recv(connected, recv_data, RECV_DATA, 0);
@@ -331,39 +368,38 @@ void StartUartTask(void *argument)
 */
 
 
-uint32_t image,rnumber;char wBuff[2]="";
-uint8_t rBuff[2]="";
 
-uint16_t readflash16hex;
 /* USER CODE END Header_StartFlash_w25q */
 void StartFlash_w25q(void *argument)
 {
   /* USER CODE BEGIN StartFlash_w25q */
-	 W25qxx_Init();
+	// W25qxx_Init();
 
 	 // W25qxx_EraseSector(0);// erase page 0~15;
 
 	 printf("\r\n note:w25qxx EraseSector_page_is_0-15\r\n");
 
-
 	  //write the picture into the extern flash
-#if (_W25QXX_DEBUG==1)
-	  uint16_t i,j;
-		 W25qxx_EraseChip();
 
-	  for(i=0;i<480;i++)
+#if (_W25QXX_DEBUG_Write==1)
+		 W25qxx_EraseChip();
+	 uint16_t i,j;
+	 uint8_t wBuff[2]="";
+	 uint32_t image,rnumber=0;
+	  for(i=0;i<LOGO_H;i++)
 	  {
-			LCD_SetCursor(0,i);   	//设置光标位置
-			LCD_WriteRAM_Prepare();     //�??????????????????????????????始写入GRAM
-			for(j=0;j<800;j++)
-			{ // LCD->LCD_RAM=sky_animation_mask[i*800+j];
-				image=i*800+j;
+			for(j=0;j<LOGO_W;j++)
+			{
+//LCD->LCD_RAM=sky_animation_mask[i*LOGO_W+j];
+
+				image=i*LOGO_W+j;
 		//	 printf("\r\n>>>>>>sky_animation_mask= 0x%hx\r\n",sky_animation_mask[image]);
 		//	 printf("\r\n\r\n\r\nimage %d\r\n",(int)image);
 			// printf("\r\nrnumber %d\r\n",rnumber);
 			 wBuff[0] = sky_animation_mask[image];
 			 wBuff[1] = (sky_animation_mask[image]>>8);
-	 // printf("\r\n wBuffL= 0x%x  wBuffH= 0x%x\r\n",wBuff[0],wBuff[1]);
+	 printf("\r\nrnumber %d\r\n",rnumber);
+	//  printf("\r\n wBuffL= 0x%x  wBuffH= 0x%x\r\n",wBuff[0],wBuff[1]);
 
 	  W25qxx_WriteByte(wBuff[0],rnumber);
 	  W25qxx_WriteByte(wBuff[1],rnumber+1);
@@ -373,56 +409,27 @@ void StartFlash_w25q(void *argument)
 		// printf(" rBuffL=%x rBuffH= 0x%x \r\n",rBuff[0],rBuff[1]);
 		 readflash16hex=rBuff[1];
 		readflash16hex=((readflash16hex<<8)+rBuff[0]);
-		//LCD->LCD_RAM=readflash16hex;
-	 */
-	  // printf("\r\n>>>>>>readflash16hex= 0x%hx\r\n",readflash16hex);
-		 rnumber=rnumber+2;}
-	  }
-#endif
+	LCD->LCD_RAM=readflash16hex;
 
+	  printf("\r\n>>>>>>readflash16hex= 0x%hx\r\n",readflash16hex);
+	  */
+		 rnumber=rnumber+2;
+
+			}
+	  }
+
+#endif
 printf("\r\n >>>>>:w25qxx Write_done 0-15\r\n");
   /* Infinite loop */
   for(;;)
   {
 
-#if (_W25QXX_DEBUG==1)
-	  for(i=0;i<480;i++)
-		  {
-				LCD_SetCursor(0,i);   	//设置光标位置
-				LCD_WriteRAM_Prepare();     //�??????????????????????????????始写入GRAM
-				for(j=0;j<800;j++)
-				{
-					LCD->LCD_RAM=readflash16hex;
-					//LCD->LCD_RAM=sky_animation_mask[i*799+j];
-			/*		image=i*799+j;
-				// printf("\r\n>>>>>>sky_animation_mask= 0x%hx\r\n",sky_animation_mask[image]);
-				 printf("\r\n\r\n\r\nimage %d\r\n",(int)image);
-				// printf("\r\nrnumber %d\r\n",rnumber);
-				 wBuff[0] = sky_animation_mask[image];
-				 wBuff[1] = (sky_animation_mask[image]>>8);
-		 // printf("\r\n wBuffL= 0x%x  wBuffH= 0x%x\r\n",wBuff[0],wBuff[1]);
-
-		  W25qxx_WriteByte(wBuff[0],rnumber);
-		  W25qxx_WriteByte(wBuff[1],rnumber+1);
-		  */
-		  W25qxx_ReadByte(&rBuff[0],rnumber);
-		  W25qxx_ReadByte(&rBuff[1],rnumber+1);
-			// printf(" rBuffL=%x rBuffH= 0x%x \r\n",rBuff[0],rBuff[1]);
-			 readflash16hex=rBuff[1];
-			readflash16hex=((readflash16hex<<8)+rBuff[0]);
-
-			// printf("\r\n>>>>>>readflash16hex= 0x%hx\r\n",readflash16hex);
-			 rnumber=rnumber+2;
-
-				}
-		  }
-#endif
 
 
 	  printf("\r\n >>>>>:w25qxx Write_done 0-15\r\n");
 	//  vW25qx_Read(rBuff,0,66530);
 	//  printf("\r\nlooprBuff=%x\r\\n",rBuff);
-    osDelay(100);
+    osDelay(1000);
   }
   /* USER CODE END StartFlash_w25q */
 }
@@ -441,19 +448,56 @@ void StartAT24C16Start(void *argument)
 {
   /* USER CODE BEGIN StartAT24C16Start */
   /* Infinite loop */
-ws2812_init(LED_NUMS);//5050串行通讯时序要求很严，注意供电电源，必须稳定，不然无法点�???????????????5050LED
+ws2812_init(LED_NUMS);//5050串行通讯时序要求很严，注意供电电源，必须稳定，不然无法点�????????????????5050LED
   for(;;)
   {
 
-if(current_float>10)
+if((current_float>10)||(RGB_FIXTRUE==1))
 {
+
 ws2812_example();
 //item 1 display
-if( rgbset.R==1)LCD_ShowString(170,87,200,16,16,">set_4*30_R>>>>",1);
+if( rgbset.R==1)
+#ifdef LBX_1250B_C_V12
+#elif defined  LBX_1250B_E_V12
+	LCD_ShowString(170,87,200,16,16,">set_6*10_R>>>>",1);
+#elif defined LBX_1250B_C_D_V11
+LCD_ShowString(170,87,200,16,16,">set_4*30_R>>>>",1);
+#elif defined LBX_1250A_C_V11
+LCD_ShowString(170,87,200,16,16,">set_12*6_R>>>>",1);
+#elif defined LBX_1250B_F_V12
+LCD_ShowString(170,87,200,16,16,">set_4*10_R>>>>",1);
+#elif defined LBX_1250C_B_V12
+LCD_ShowString(170,87,200,16,16,">set_20*6_R>>>>",1);
+#endif
 else LCD_ShowString(170,87,150,16,16,">no_R_led_input",1);
-if (rgbset.G==1)LCD_ShowString(170,126,200,16,16,">set_4*30_G>>>>",1);
+if (rgbset.G==1)
+#ifdef LBX_1250B_C_V12
+#elif defined  LBX_1250B_E_V12
+	LCD_ShowString(170,126,200,16,16,">set_6*10_G>>>>",1);
+#elif defined LBX_1250B_C_D_V11
+	LCD_ShowString(170,126,200,16,16,">set_4*30_G>>>>",1);
+#elif defined LBX_1250A_C_V11
+	LCD_ShowString(170,126,200,16,16,">set_12*6_G>>>>",1);
+#elif defined LBX_1250B_F_V12
+	LCD_ShowString(170,126,200,16,16,">set_4*10_G>>>>",1);
+#elif defined LBX_1250C_B_V12
+	LCD_ShowString(170,126,200,16,16,">set_20*6_G>>>>",1);
+#endif
 else LCD_ShowString(170,126,150,16,16,">no_G_led_input",1);
-if (rgbset.B==1)LCD_ShowString(170,167,200,16,16,">set_4*30_B>>>>",1);
+if (rgbset.B==1)
+#ifdef LBX_1250B_C_V12
+#elif defined  LBX_1250B_E_V12
+	LCD_ShowString(170,167,200,16,16,">set_6*10_B>>>>",1);
+#elif defined LBX_1250B_C_D_V11
+	LCD_ShowString(170,167,200,16,16,">set_4*30_B>>>>",1);
+#elif defined LBX_1250A_C_V11
+	LCD_ShowString(170,167,200,16,16,">set_12*6_B>>>>",1);
+#elif defined LBX_1250B_F_V12
+	LCD_ShowString(170,167,200,16,16,">set_4*10_B>>>>",1);
+#elif defined LBX_1250C_B_V12
+	LCD_ShowString(170,167,200,16,16,">set_20*6_B>>>>",1);
+#endif
 else LCD_ShowString(170,167,150,16,16,">no_B_led_input",1);
 // item 2 display
 LCD_ShowString(180,287,60,24,24,RGBvalve,1);
@@ -468,9 +512,10 @@ else LCD_ShowString(373,328,60,24,24,"FAIL",1);
 resultflag++;
 if(	resultflag==1)
 {
-LCD_ShowBigString(156,566,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�????
+LCD_ShowBigString(156,566,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�?????
 //for(uint8_t i=40;i<50;i++)
 LCD_Draw_Circle(270,650,50);
+
 }
 if(	resultflag>=3)//delay(1S) Display result time for reset testing;
 {resultflag=0;
@@ -481,19 +526,21 @@ LCD_ShowString(257,430,32,32,32,pulsenumber,1);
 if(pulse==PULSE_DOUT) LCD_ShowString(257,471,100,32,32,"PASS",1);
 else LCD_ShowString(257,471,100,32,32,"FAIL",1);
 if((pulse%2)&&(((VALTAGE_MIN<((uint8_t)val_float))&&((uint8_t)val_float)<VALTAGE_MAX))&&(((CURRENT_MIN<(uint8_t)current_float)&&((uint8_t)current_float)<CURRENT_MAX)))//判断输出脉冲Dout=2,电流90ma<current<110ma,电压3v<valtage<6V
-LCD_ShowBigString(156,566,230,148,148," !#$",BIGWORD_GREENCOLOR,1);// !"#$�????注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，其真正的数据�????"PASS"对应的数据标�????
+LCD_ShowBigString(156,566,230,148,148," !#$",BIGWORD_GREENCOLOR,1);// !"#$�?????注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，其真正的数据�?????"PASS"对应的数据标�?????
 else
-LCD_ShowBigString(156,566,230,148,148,"%&'(",BIGWORD_REDCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�????
+LCD_ShowBigString(156,566,230,148,148,"%&'(",BIGWORD_REDCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�?????
 pulse=0;
+
 while(current_float>10);
+
 }
 
 }
 else
 {
 LCD_ShowString(257,430,32,32,32,"   ",1);
-LCD_ShowBigString(156,566,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�????
-LCD_ShowBigString(155,562,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�????
+LCD_ShowBigString(156,566,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�?????
+LCD_ShowBigString(155,562,400,148,148,"%&'(",BIGWORD_ClEARCOLOR,1);//注意这里是用字符代替显示内容，因为flash不够无需导入多余的字符显示，真正的数据为"FAILED"对应的数据标�?????
 rgbset.R=0;
 rgbset.G=0;
 rgbset.B=0;

@@ -1,6 +1,6 @@
 #include "lcd.h"
 #include "font.h"
-#include "logo.h"
+#include "w25qxx.h"
 #include "stdlib.h"
 #include "sys.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -1925,7 +1925,7 @@ void LCD_Draw_Circle(u16 x0,u16 y0,u8 r)
 //在指定位置画一个指定大小的圆进度条
 //(x,y):中心点
 //r    :半径
-void LCD_Draw_CircleColor(u16 x0,u16 y0,u8 r,u8 ex,u8 ey,u16 color)
+void LCD_Draw_CircleColor(u16 x0,u16 y0,u8 r,u8 ex,u8 ey,u16 *color)
 {
 	int a,b;
 	int di;
@@ -1973,6 +1973,7 @@ void LCD_Draw_CircleColor(u16 x0,u16 y0,u8 r,u8 ex,u8 ey,u16 color)
 //num:要显示的字符:" "--->"~"
 //size:字体大小 12/16/24/32
 //mode:叠加方式(1)还是非叠加方式(0)
+
 void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
 {  							  
     u8 temp,t1,t;
@@ -1987,10 +1988,23 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
 		else if(size==32)temp=asc2_3216[num][t];	//调用3216字体
 		else return;								//没有的字库
 		for(t1=0;t1<8;t1++)
-		{			    
+		{
 			if(temp&0x80)LCD_Fast_DrawPoint(x,y,POINT_COLOR);
 			else if(mode==0)LCD_Fast_DrawPoint(x,y,BACK_COLOR);
-			else LCD_Fast_DrawPoint(x+1,y+1,sky_animation_mask[y*LOGO_W+x]);
+			//else LCD_Fast_DrawPoint(x+1,y+1,sky_animation_mask[y*LOGO_W+x]);从stm32f324中的flash读取像素点
+			else//从stm32 SPI w25qxx中读取像素点
+			{
+				 static uint8_t rBuff[2]="";
+				 static uint32_t rnumber=0;
+				 static uint16_t readflash16hex;
+				  rnumber=(y*LOGO_W+x)*2;//从w25qxx中找到对应的像素点地址将其画到背景
+				  W25qxx_ReadByte(&rBuff[0],rnumber);
+				  W25qxx_ReadByte(&rBuff[1],rnumber+1);
+				  readflash16hex=rBuff[1];
+				  readflash16hex=((readflash16hex<<8)+rBuff[0]);
+				LCD_Fast_DrawPoint(x+1,y+1,readflash16hex);
+
+			}
 			temp<<=1;
 			y++;
 			if(y>=lcddev.height)return;		//超区域了
@@ -2021,7 +2035,20 @@ void LCD_ShowChar1(u16 x,u16 y,u8 num,u8 size,u32 color,u8 mode)
 		for(t1=0;t1<8;t1++)
 		{
 			if(temp&0x80)LCD_Fast_DrawPoint(x,y,color);
-			else LCD_Fast_DrawPoint(x+1,y+1,sky_animation_mask[y*LOGO_W+x]);
+				else
+				{
+					 static uint8_t rBuff[2]="";
+					 static uint32_t rnumber=0;
+					 static uint16_t readflash16hex;
+					  rnumber=(y*LOGO_W+x)*2;
+					  W25qxx_ReadByte(&rBuff[0],rnumber);
+					  W25qxx_ReadByte(&rBuff[1],rnumber+1);
+					  readflash16hex=rBuff[1];
+					  readflash16hex=((readflash16hex<<8)+rBuff[0]);
+					LCD_Fast_DrawPoint(x+1,y+1,readflash16hex);
+
+				}
+
 			temp<<=1;
 			y++;
 			if(y>=lcddev.height)return;		//超区域了

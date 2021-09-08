@@ -26,10 +26,10 @@ lcd.c:1836:6:LCD_DrawLine	64	static
 lcd.c:1872:6:LCD_DrawRectangle	24	static
 lcd.c:1882:6:LCD_Draw_Circle	32	static
 lcd.c:1928:6:LCD_Draw_CircleColor	48	static
-lcd.c:1976:6:LCD_ShowChar	32	static
-lcd.c:2008:6:LCD_ShowChar1	40	static
-lcd.c:2039:6:LCD_ShowBigString	40	static
-lcd.c:2055:5:LCD_Pow	24	static
-lcd.c:2067:6:LCD_ShowNum	48	static
-lcd.c:2095:6:LCD_ShowxNum	48	static
-lcd.c:2120:6:LCD_ShowString	40	static
+lcd.c:1977:6:LCD_ShowChar	32	static
+lcd.c:2022:6:LCD_ShowChar1	40	static
+lcd.c:2066:6:LCD_ShowBigString	40	static
+lcd.c:2082:5:LCD_Pow	24	static
+lcd.c:2094:6:LCD_ShowNum	48	static
+lcd.c:2122:6:LCD_ShowxNum	48	static
+lcd.c:2147:6:LCD_ShowString	40	static

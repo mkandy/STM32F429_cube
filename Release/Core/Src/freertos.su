@@ -1,0 +1,7 @@
+freertos.c:186:6:StartDefaultTask	88	static
+freertos.c:267:6:StartPingTask	8	static
+freertos.c:303:6:StartUartTask	8	static
+freertos.c:333:6:StartFlash_w25q	32	static
+freertos.c:434:6:StartAT24C16Start	40	static
+freertos.c:127:6:MX_FREERTOS_Init	8	static
+freertos.c:546:6:client	72	static

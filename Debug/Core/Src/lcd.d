@@ -53,7 +53,9 @@ Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/lcd.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/font.h ../Core/Inc/logo.h
+ ../Core/Inc/font.h ../Core/Inc/w25qxx.h ../Core/Inc/main.h \
+ ../Core/Inc/w25qxxConf.h ../Core/Inc/spi.h \
+ ../Core/Inc/stm32f4xx_hal_conf.h ../Core/Inc/module_select.h
 
 ../Core/Inc/lcd.h:
 
@@ -169,4 +171,14 @@ Core/Src/lcd.o: ../Core/Src/lcd.c ../Core/Inc/lcd.h \
 
 ../Core/Inc/font.h:
 
-../Core/Inc/logo.h:
+../Core/Inc/w25qxx.h:
+
+../Core/Inc/main.h:
+
+../Core/Inc/w25qxxConf.h:
+
+../Core/Inc/spi.h:
+
+../Core/Inc/stm32f4xx_hal_conf.h:
+
+../Core/Inc/module_select.h:

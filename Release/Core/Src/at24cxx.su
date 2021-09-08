@@ -1,0 +1,5 @@
+at24cxx.c:5:9:writeAT24C16.part.0	48	static
+at24cxx.c:46:9:readAT24C16.part.0	48	static
+at24cxx.c:5:9:writeAT24C16	0	static
+at24cxx.c:46:9:readAT24C16	0	static
+at24cxx.c:85:6:vE2romTest	16	static

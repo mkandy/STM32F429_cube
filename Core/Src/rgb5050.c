@@ -46,6 +46,7 @@ void ws2812_blue(uint8_t led_nums)
 		ws2812_set_RGB(0x00, 0x00, 0x22, i);
 	}
 	 HAL_TIM_PWM_Start_DMA(&htim8,TIM_CHANNEL_2,RGB_buffur,RESET_PULSE + WS2812_DATA_LEN);
+
 }
 /*全亮红灯*/
 void ws2812_red(uint8_t led_nums)
@@ -68,7 +69,6 @@ void ws2812_green(uint8_t led_nums)
 uint8_t pulse=0;
 void ws2812_example(void)
 {		
-
     //#2.传输数据
     ws2812_red(LED_NUMS);
     rgbset.R=1;

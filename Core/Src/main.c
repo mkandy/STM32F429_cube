@@ -58,17 +58,27 @@
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-
+#define UARTDEBUG  1
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#if(UARTDEBUG==1)
 PUTCHAR_PROTOTYPE
 {
 //同样USART2改为你的串口
 	HAL_UART_Transmit(&huart5, (uint8_t*)&ch,1,HAL_MAX_DELAY);
     return ch;
 }
+#else
+int _write(int file , char *ptr,int len)
+{
+    int i = 0;
+    for(i = 0;i<len;i++)
+        ITM_SendChar((*ptr++));
+    return len;
+}
+#endif
 /* USER CODE END 0 */
 
 /**
