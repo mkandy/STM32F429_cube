@@ -22,6 +22,7 @@ FreeRtos
 #### 更新和维护
 
 1.  增加RGB_fixtrue定义，在非调试rgb灯时，宏定义为0，防止while(current>10);无限等待；
+2.  增加SPI_flash读取像素，将MCU flash 释放512KB出来用于 IAP https升级程序。。。。
 
 
 
@@ -30,4 +31,5 @@ FreeRtos
 1.  CAN口连接正常后，五分钟无数据系统死机；
 2.  无实物RGB灯板时，防止while(current>10);无限等待；
 3.  每次初始化cubmx HAL配置后都要重定义 SPI flash DMA callback使能，因为默认cubmx未始能
+4. TFT_LCD局部刷屏时，每次刷屏都必须按从上到下顺序局部依次刷屏，不可从下到上，再到下，会出现雪花点
 
